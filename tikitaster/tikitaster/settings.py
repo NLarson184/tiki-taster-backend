@@ -84,13 +84,20 @@ WSGI_APPLICATION = 'tikitaster.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default='postgresql://tikitaster_storage_user:OfRzkenIfoDQIYqxfwyNpyobe3RI7dkY@dpg-d38vkfbe5dus73agcus0-a.oregon-postgres.render.com/tikitaster_storage',
-        conn_max_age=600
-    )
-}
-
+if DEBUG:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='postgresql://tikitaster_storage_user:OfRzkenIfoDQIYqxfwyNpyobe3RI7dkY@dpg-d38vkfbe5dus73agcus0-a.oregon-postgres.render.com/tikitaster_storage',
+            conn_max_age=600
+        )
+    }
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default='postgresql://tikitaster_storage_user:OfRzkenIfoDQIYqxfwyNpyobe3RI7dkY@dpg-d38vkfbe5dus73agcus0-a/tikitaster_storage',
+            conn_max_age=600
+        )
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
