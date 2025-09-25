@@ -16,7 +16,6 @@ import dj_database_url
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-AUTH_USER_MODEL = "ratings.User"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
@@ -39,8 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'accounts',
     'ratings'
 ]
+
+AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -84,8 +86,7 @@ WSGI_APPLICATION = 'tikitaster.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        # Replace this value with your local database's connection string.
-        default='postgresql://tiki_taster_dev_user:Hzb2gPMHfH24PIpo3CrYNs49dnfXeSph@dpg-d2p2cmd6ubrc73bs29bg-a.oregon-postgres.render.com/tiki_taster_dev',
+        default='postgresql://tikitaster_storage_user:OfRzkenIfoDQIYqxfwyNpyobe3RI7dkY@dpg-d38vkfbe5dus73agcus0-a.oregon-postgres.render.com/tikitaster_storage',
         conn_max_age=600
     )
 }
