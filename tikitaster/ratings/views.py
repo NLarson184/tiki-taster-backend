@@ -33,7 +33,9 @@ class DrinkViewSet(viewsets.ModelViewSet):
 class BarViewSet(viewsets.ModelViewSet):
     queryset = Bar.objects.all()
     serializer_class = BarSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
