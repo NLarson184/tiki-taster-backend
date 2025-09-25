@@ -1,6 +1,6 @@
 
-from ratings.models import Rating, Drink, Bar
-from ratings.serializers import RatingSerializer, DrinkSerializer, BarSerializer
+from ratings.models import Rating, Drink, Bar, Tag
+from ratings.serializers import RatingSerializer, DrinkSerializer, BarSerializer, TagSerializer
 # from snippets.permissions import IsOwnerOrReadOnly
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
@@ -13,7 +13,8 @@ def api_root(request, format=None):
     return Response({
         'ratings': reverse('rating-list', request=request, format=format),
         'bars': reverse('bar-list', request=request, format=format),
-        'drinks': reverse('drink-list', request=request, format=format)
+        'drinks': reverse('drink-list', request=request, format=format),
+        'tags': reverse('tag-list', request=request, format=format)
     })
 
 class RatingViewSet(viewsets.ModelViewSet):
@@ -32,3 +33,7 @@ class DrinkViewSet(viewsets.ModelViewSet):
 class BarViewSet(viewsets.ModelViewSet):
     queryset = Bar.objects.all()
     serializer_class = BarSerializer
+
+class TagViewSet(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

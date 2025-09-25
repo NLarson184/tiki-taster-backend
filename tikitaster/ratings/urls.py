@@ -1,28 +1,62 @@
 from django.urls import path, include
 from ratings import views
 from rest_framework.urlpatterns import format_suffix_patterns
-from ratings.views import api_root, RatingViewSet
+from ratings.views import api_root, RatingViewSet, BarViewSet, DrinkViewSet, TagViewSet
 
 rating_list = RatingViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
+rating_detail = RatingViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
-bar_list = RatingViewSet.as_view({
+bar_list = BarViewSet.as_view({
     'get': 'list',
     'post': 'create'
 })
+bar_detail = BarViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
 
-drink_list = RatingViewSet.as_view({
+drink_list = DrinkViewSet.as_view({
     'get': 'list',
     'post': 'create'
+})
+drink_detail = DrinkViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
+})
+
+tag_list = TagViewSet.as_view({
+    'get': 'list',
+    'post': 'create'
+})
+tag_detail = TagViewSet.as_view({
+    'get': 'retrieve',
+    'put': 'update',
+    'patch': 'partial_update',
+    'delete': 'destroy'
 })
 
 urlpatterns = [
     path('', views.api_root),
     path('ratings/', rating_list, name='rating-list'),
+    path('ratings/<int:pk>/', rating_detail, name='rating-detail'),
     path('bars/', bar_list, name='bar-list'),
-    path('drinks/', drink_list, name='drink-list')
+    path('bars/<int:pk>/', bar_detail, name='bar-detail'),
+    path('drinks/', drink_list, name='drink-list'),
+    path('drinks/<int:pk>/', drink_detail, name='drink-detail'),
+    path('tags/', tag_list, name='tag-list'),
+    path('tags/<int:pk>/', tag_detail, name='tag-detail')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
