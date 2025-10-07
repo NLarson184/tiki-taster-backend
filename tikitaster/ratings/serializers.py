@@ -13,15 +13,15 @@ class RatingSerializer(serializers.ModelSerializer):
 class DrinkSerializer(serializers.ModelSerializer):
    class Meta:
         model = Drink
-        fields = ['url', 'name', 'bar', 'tags']
+        fields = ['url', 'id', 'name', 'bar', 'tags', 'ratings']
         depth = 1
 
 class BarSerializer(serializers.ModelSerializer):
-    drinks = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='drink-detail')
+    # drinks = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='drink-detail')
 
     class Meta:
         model = Bar
-        fields = ['url', 'name', 'drinks']
+        fields = ['url', 'id', 'name', 'drinks']
         depth = 1
 
 class TagSerializer(serializers.ModelSerializer):
