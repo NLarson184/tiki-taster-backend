@@ -91,7 +91,7 @@ WSGI_APPLICATION = 'tikitaster.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://tikitaster_storage_user:OfRzkenIfoDQIYqxfwyNpyobe3RI7dkY@dpg-d38vkfbe5dus73agcus0-a.oregon-postgres.render.com/tikitaster_storage',
+        default='postgresql://postgres:YFEzsJhk7pVHfKuWswLk@localhost:5432/tikitaster-storage',
         conn_max_age=600
     )
 }
