@@ -24,6 +24,9 @@ bar_detail = BarViewSet.as_view({
     'patch': 'partial_update',
     'delete': 'destroy'
 })
+drinks_at_bar = BarViewSet.as_view({
+    'get': 'drinks_at_bar'
+})
 
 drink_list = DrinkViewSet.as_view({
     'get': 'list',
@@ -53,6 +56,7 @@ urlpatterns = [
     path('ratings/<int:pk>/', rating_detail, name='rating-detail'),
     path('bars/', bar_list, name='bar-list'),
     path('bars/<int:pk>/', bar_detail, name='bar-detail'),
+    path('bars/<int:pk>/drinks', drinks_at_bar, name='drinks-at-bar'),
     path('drinks/', drink_list, name='drink-list'),
     path('drinks/<int:pk>/', drink_detail, name='drink-detail'),
     path('tags/', tag_list, name='tag-list'),

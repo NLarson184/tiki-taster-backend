@@ -29,5 +29,5 @@ class TagSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Tag
-        fields = ['url', 'name', 'drinks']
+        fields = ['url', 'id', 'name', 'drinks']
         depth = 1
