@@ -9,13 +9,16 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
+from dotenv import load_dotenv
 import os
 from pathlib import Path
 import dj_database_url
 
+# Load any environment variables
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
@@ -41,10 +44,18 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'django.contrib.sites',
+    
     'rest_framework',
+    
+    'oauth2_provider', # Required by DRFSO2
+    'social_django',   # Required by DRFSO2
+    'drf_social_oauth2',
     'accounts',
-    'ratings'
+    'ratings',
 ]
+
+SITE_ID = 1
 
 AUTH_USER_MODEL = "accounts.User"
 
@@ -62,9 +73,45 @@ MIDDLEWARE = [
 
 # Removing pagination for now, until we are dealing with more data
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': None, #'rest_framework.pagination.PageNumberPagination',
-    # 'PAGE_SIZE': 10
+    'DEFAULT_PAGINATION_CLASS': None,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        # Use JWT (Bearer Token) for authentication
+        'rest_framework_simplejwt.authentication.JWTAuthentication', 
+        'rest_framework.authentication.SessionAuthentication', # Keep for DRF browsable API
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+    'EXCEPTION_HANDLER': 'drf_social_oauth2.error_handler.exception_handler',
 }
+
+# Social_django backends
+AUTHENTICATION_BACKENDS = (
+    # Django ModelBackend (required for standard login)
+    'django.contrib.auth.backends.ModelBackend',
+    
+    # Google OAuth2 backend (required for social authentication)
+    'drf_social_oauth2.backends.GoogleIdentityBackend',
+    
+    # drf-social-oauth2
+    'drf_social_oauth2.backends.DjangoOAuth2',
+    
+    # Django
+    'django.contrib.auth.backends.ModelBackend',
+)
+    
+# --- NEW GOOGLE OAUTH2 SETTINGS ---
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('GOOGLE_SOCIAL_LOGIN_CLIENT_ID')
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_SOCIAL_LOGIN_SECRET')
+
+# Define the scopes you need
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'openid',
+    'email',
+    'profile'
+]
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_ACCESS_TOKEN_METHOD = 'POST'
 
 ROOT_URLCONF = 'tikitaster.urls'
 
@@ -79,6 +126,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -91,7 +140,7 @@ WSGI_APPLICATION = 'tikitaster.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 DATABASES = {
     'default': dj_database_url.config(
-        default='postgresql://postgres:YFEzsJhk7pVHfKuWswLk@localhost:5432/tikitaster-storage',
+        default=os.getenv("POSTGRES_DATABASE_URL"),
         conn_max_age=600
     )
 }
@@ -154,3 +203,27 @@ else:
     CORS_ALLOWED_ORIGIN_REGEXES = [
         r"^https://\w+\.tikitaster\.com$",
     ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        # This logger is for the core social auth library
+        'social_core': { 
+            'handlers': ['console'],
+            'level': 'DEBUG',  # CRITICAL: Set to DEBUG
+            'propagate': True,
+        },
+        # This logger is for the DRF integration
+        'drf_social_oauth2': {
+            'handlers': ['console'],
+            'level': 'DEBUG', # CRITICAL: Set to DEBUG
+            'propagate': True,
+        },
+    },
+}
