@@ -24,11 +24,14 @@ class RatingViewSet(viewsets.ModelViewSet):
     serializer_class = RatingSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
+    @action(detail=False)
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
 
 class DrinkViewSet(viewsets.ModelViewSet):
-    queryset = Drink.objects.all()
+    # Calculate rating averages to optimize requests
+    queryset = Drink.objects.with_average_ratings().all()
+    
     serializer_class = DrinkSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
@@ -44,7 +47,7 @@ class BarViewSet(viewsets.ModelViewSet):
         except Bar.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
         
-        drinks = bar.drinks.all()
+        drinks = bar.drinks.with_average_ratings().all()
         serializer = DrinkSerializer(drinks, context={'request': request}, many=True)
         return Response(serializer.data)
 
