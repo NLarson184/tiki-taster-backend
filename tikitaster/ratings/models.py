@@ -18,6 +18,15 @@ class Rating(models.Model):
 class Bar(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     name = models.TextField()
+    formatted_address = models.TextField(default = '')
+    
+    # Store the ID from Foursquare's Places API for easy lookup
+    foursquare_place_id = models.CharField(
+        max_length=100,
+        unique=True,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return self.name

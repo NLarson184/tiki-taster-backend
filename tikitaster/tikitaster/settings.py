@@ -89,20 +89,21 @@ OAUTH2_PROVIDER = {
     ],
     # You can adjust token expiration here if needed (default is 1 hour)
     'ACCESS_TOKEN_EXPIRE_SECONDS': 3600, 
+    # 'DEFAULT_SCOPES': ['read', 'write', 'profile'],
 }
 
 # Social_django backends
 AUTHENTICATION_BACKENDS = (
-    # NEW: Add the social_core password backend here as the primary login mechanism
+    # Add the social_core password backend here as the primary login mechanism
     'social_core.backends.email.EmailAuth',
     
-    # 1. Standard Django login backend (required for DRFSO2_PASSWORD setting)
+    # Standard Django login backend (required for DRFSO2_PASSWORD setting)
     'django.contrib.auth.backends.ModelBackend',
     
-    # 2. Google OpenID Connect backend (Confirmed working for ID Token flow)
+    # Google OpenID Connect backend (Confirmed working for ID Token flow)
     'drf_social_oauth2.backends.GoogleIdentityBackend',
     
-    # 3. DRFSO2 token conversion backend (required for /auth/convert-token)
+    # DRFSO2 token conversion backend (required for /auth/convert-token)
     'drf_social_oauth2.backends.DjangoOAuth2',
 )
     

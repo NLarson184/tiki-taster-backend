@@ -27,6 +27,9 @@ bar_detail = BarViewSet.as_view({
 drinks_at_bar = BarViewSet.as_view({
     'get': 'drinks_at_bar'
 })
+search_bars = BarViewSet.as_view({
+    'get': 'geoapify_search'
+})
 
 drink_list = DrinkViewSet.as_view({
     'get': 'list',
@@ -55,8 +58,9 @@ urlpatterns = [
     path('ratings/', rating_list, name='rating-list'),
     path('ratings/<int:pk>/', rating_detail, name='rating-detail'),
     path('bars/', bar_list, name='bar-list'),
-    path('bars/<int:pk>/', bar_detail, name='bar-detail'),
-    path('bars/<int:pk>/drinks', drinks_at_bar, name='drinks-at-bar'),
+    path('bars/<str:pk>/', bar_detail, name='bar-detail'),
+    path('bars/<str:pk>/drinks', drinks_at_bar, name='drinks-at-bar'),
+    path('bars/search', search_bars, name='search-bars'),
     path('drinks/', drink_list, name='drink-list'),
     path('drinks/<int:pk>/', drink_detail, name='drink-detail'),
     path('tags/', tag_list, name='tag-list'),

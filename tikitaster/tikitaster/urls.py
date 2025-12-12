@@ -4,7 +4,8 @@ from rest_framework import serializers
 
 urlpatterns = [
     path('admin/', admin.site.urls), 
-    path('', include('ratings.urls'))
+    path('', include('ratings.urls')),
+    path('account/', include('accounts.urls'))
 ]
 
 # --- DRFSO2 ENDPOINT ---

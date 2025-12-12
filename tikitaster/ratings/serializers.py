@@ -6,6 +6,8 @@ from django.db import transaction
 class RatingSerializer(serializers.ModelSerializer):
     # WRITE_ONLY data for incoming string data
     bar_id = serializers.CharField(write_only=True)
+    bar_name = serializers.CharField(write_only=True)
+    bar_address = serializers.CharField(write_only=True)
     drink_name = serializers.CharField(write_only=True)
     tag_list = serializers.ListField(
         child=serializers.CharField(max_length=50),
@@ -23,7 +25,7 @@ class RatingSerializer(serializers.ModelSerializer):
             # Output FKs
             'bar', 'drink',
             # Input Custom Fields
-            'bar_id', 'drink_name', 'tag_list']
+            'bar_id', 'bar_name', 'bar_address', 'drink_name', 'tag_list']
         depth = 1
         read_only_fields = ('bar', 'drink')
         
@@ -34,12 +36,16 @@ class RatingSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         bar_id = validated_data.pop('bar_id').strip()
+        bar_name = validated_data.pop('bar_name').strip()
+        bar_address = validated_data.pop('bar_address').strip()
         drink_name = validated_data.pop('drink_name').strip()
         tag_list = validated_data.pop('tag_list', [])
         
-        # Get Bar
-        bar_instance= Bar.objects.get(
-            id=bar_id
+        # Get or Create Bar
+        bar_instance, _= Bar.objects.get_or_create(
+           foursquare_place_id = bar_id,
+           name__iexact = bar_name,
+           defaults = {'name': bar_name, 'formatted_address': bar_address}
         )
         
         # Get or Create Drink
@@ -107,7 +113,7 @@ class BarSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bar
-        fields = ['url', 'id', 'name', 'drinks']
+        fields = ['url', 'id', 'name', 'drinks', 'foursquare_place_id', 'formatted_address']
         depth = 1
 
 class TagSerializer(serializers.ModelSerializer):
@@ -117,3 +123,21 @@ class TagSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ['url', 'id', 'name', 'drinks']
         depth = 1
+
+# NON-MODEL SERIALIZERS
+class FoursquareLocationSerializer(serializers.Serializer):
+    formatted_address = serializers.CharField()
+
+class FoursquarePlaceSerializer(serializers.Serializer):
+    fsq_place_id = serializers.CharField()
+    name = serializers.CharField()
+    location = FoursquareLocationSerializer()
+    
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        formatted_address = data['location']['formatted_address']
+        del data['location']
+        
+        data['formatted_address'] = formatted_address
+        
+        return data
